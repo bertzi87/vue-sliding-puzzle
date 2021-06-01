@@ -19,8 +19,8 @@ export default {
         backgroundPositionY: this.percentage * (Math.floor((this.nr - 1) / this.size)) + '%',
         height: `calc(100vmin/${this.size})`,
         width: `calc(100vmin/${this.size})`,
-        opacity: (this.nr == 0) ? 0 : 1,
         fontSize: `calc(100vmin/${this.size}/5)`,
+        opacity: (this.nr == 0) ? 0 : 1,
       }
     }
   }

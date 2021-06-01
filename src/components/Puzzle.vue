@@ -1,11 +1,5 @@
 <template>
-  <div
-    tabindex="0"
-    v-on:keyup.up="onKeyUp('U')"
-    v-on:keyup.down="onKeyUp('D')"
-    v-on:keyup.left="onKeyUp('L')"
-    v-on:keyup.right="onKeyUp('R')"
-  >
+  <div>
     <div>
       <ImageChooser @imageChange="onImageChange" />
       <ImageSearch @imageChange="onImageChange" />
@@ -24,6 +18,11 @@
 
     <div
       class="container"
+      tabindex="0"
+      v-on:keyup.up="onKeyUp('U')"
+      v-on:keyup.down="onKeyUp('D')"
+      v-on:keyup.left="onKeyUp('L')"
+      v-on:keyup.right="onKeyUp('R')"
     >
       <Board
         :size="size"
@@ -106,5 +105,6 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+  outline: 0;
 }
 </style>

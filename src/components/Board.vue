@@ -37,7 +37,7 @@ export default {
 
 <style scoped>
 .puzzle-list-move {
-  transition: transform 200ms ease;
+  transition: transform 200ms;
 }
 
 ul {
