@@ -1,41 +1,58 @@
 <template>
-  <div>
-    <ImageChooser @imageChange="onImageChange" />
-    <ImageSearch @imageChange="onImageChange" />
+  <div class="main" :class="{'dark-mode': isDark}">
 
-    <select v-model="size">
-      <option v-for="i in 8" :key="i">{{i + 2}}</option>
-    </select>
+    <div class="container my-row">
+        <ImageChooser @imageChange="onImageChange" />
+        <ImageSearch @imageChange="onImageChange" />
 
-    <button @click="onShuffle">Shuffle</button>
+        <select v-model="size" class="form-control">
+          <option v-for="i in 8" :key="i">{{i + 2}}</option>
+        </select>
 
-    <label>
-      <input type="checkbox" v-model="showNr">
-      Numbers
-    </label>
-  </div>
+        <button class="btn" @click="onShuffle">Shuffle</button>
+        <button class="btn" @click="onSolve">Solve</button>
 
-  <div
-    class="container"
-    tabindex="0"
-    v-on:keyup.up="onKeyUp('U')"
-    v-on:keyup.down="onKeyUp('D')"
-    v-on:keyup.left="onKeyUp('L')"
-    v-on:keyup.right="onKeyUp('R')"
-  >
-    <Board
-      :size="size"
-      :board="board"
-      :image="image"
-      :show="showBoard"
-      :showNr="showNr"
-      @onTileClick="onTileClick"
-    />
+        <div class="custom-switch">
+          <input v-model="showNr" type="checkbox" id="checkbox-4" value="">
+          <label for="checkbox-4">Numbers</label>
+        </div>
+
+        <div class="custom-switch">
+          <input v-model="is3dEnabled" type="checkbox" id="3d-switch">
+          <label for="3d-switch">{{ is3dEnabled ? "2D" : "3D" }}</label>
+        </div>
+
+        <div class="custom-switch">
+          <input v-model="isDark" type="checkbox" id="theme-switch">
+          <label for="theme-switch">{{ isDark ? "Light" : "Dark" }}</label>
+        </div>
+    </div>
+
+    <div
+      class="board"
+      tabindex="0"
+      @keydown.up.prevent="onKeyUp('U')"
+      @keydown.down.prevent="onKeyUp('D')"
+      @keydown.left.prevent="onKeyUp('L')"
+      @keydown.right.prevent="onKeyUp('R')"
+    >
+      <Board
+        :size="size"
+        :board="board"
+        :puzzle="puzzle"
+        :image="image"
+        :show="showBoard"
+        :showNr="showNr"
+        :enable3d="is3dEnabled"
+        @onTileClick="onTileClick"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import Puzzle from "../core/puzzle.js"
+import Solver from '../core/solver.js'
 import Board from "./Board.vue"
 import ImageChooser from "./form/ImageChooser.vue"
 import ImageSearch from "./form/ImageSearch.vue"
@@ -54,6 +71,9 @@ export default {
       showBoard: false,
       image: '',
       showNr: true,
+      isDark: false,
+      isSolving: false,
+      is3dEnabled: false,
     }
   },
   watch: {
@@ -78,6 +98,7 @@ export default {
     },
     onTileClick(index) {
       this.puzzle.clickTo(index)
+      this.isSolving = false
       this.refreshBoard()
     },
     onKeyUp(direction) {
@@ -86,7 +107,34 @@ export default {
     },
     onShuffle() {
       this.puzzle.shuffle()
+      this.isSolving = false
       this.refreshBoard()
+    },
+    moveToWithTimeout(dir) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          this.puzzle.moveEmpty(dir)
+          this.refreshBoard()
+          resolve()
+        }, 200)
+      })
+    },
+    async onSolve() {
+      const solver = new Solver(this.puzzle)
+
+      console.time("solver")
+      const res = solver.solve()
+      console.timeEnd("solver")
+
+      console.log("Visited Nodes ", solver.visitedNr)
+      console.log(res.path)
+
+      this.isSolving = true
+      for (const dir of res.path) {
+        if (this.isSolving) {
+          await this.moveToWithTimeout(dir)
+        }
+      }
     },
     onImageChange(image) {
       this.image = image
@@ -96,7 +144,34 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.main {
+  min-height:100%
+}
+
+.board {
+  margin-top: 10px;
+  --my-background-color: var(--lm-base-body-bg-color);
+  --my-circle-color: white;
+  --my-circle-bg-color: rgba(0, 0, 0, .3);
+}
+
+.dark-mode .board {
+  --my-background-color: var(--dm-base-body-bg-color);
+  --my-circle-color: black;
+  --my-circle-bg-color: rgba(255, 255, 255, .3);
+}
+
+.my-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: row wrap;
+}
+.my-row > * {
+  width: auto;
+  margin: 5px !important;
+}
+.board {
   width: 100%;
   height: 100%;
   outline: 0;

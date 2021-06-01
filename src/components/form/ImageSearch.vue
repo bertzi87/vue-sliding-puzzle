@@ -1,6 +1,10 @@
 <template>
-  <input v-model="word" type="text" placeholder="Search">
-  <button @click="getImage">Search image</button>
+  <div class="input-group">
+    <input v-model="word" type="text" class="form-control" placeholder="Search">
+    <div class="input-group-append">
+      <button @click="getImage" class="btn" type="button">Search</button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -38,5 +42,5 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 </style>

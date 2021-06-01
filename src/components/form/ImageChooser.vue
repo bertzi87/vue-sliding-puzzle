@@ -1,5 +1,8 @@
 <template>
-  <input type="file" id="image-chooser" @change="onImageChange()">
+  <div class="custom-file">
+    <input type="file" id="image-chooser" @change="onImageChange()">
+    <label for="image-chooser">Choose an image...</label>
+  </div>
 </template>
 
 <script>
@@ -16,5 +19,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+label {
+  margin-bottom: 0;
+}
 </style>

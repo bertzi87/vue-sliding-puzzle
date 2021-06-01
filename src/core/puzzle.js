@@ -38,6 +38,7 @@ class Puzzle {
       this.swapWithEmpty(this.indexOfEmpty - 1)
       return true
     }
+    return false;
   }
 
   moveEmptyRight() {
@@ -45,6 +46,7 @@ class Puzzle {
       this.swapWithEmpty(this.indexOfEmpty + 1)
       return true
     }
+    return false;
   }
 
   moveEmptyUp() {
@@ -52,6 +54,7 @@ class Puzzle {
       this.swapWithEmpty(this.indexOfEmpty - this.size)
       return true
     }
+    return false;
   }
 
   moveEmptyDown() {
@@ -59,6 +62,7 @@ class Puzzle {
       this.swapWithEmpty(this.indexOfEmpty + this.size)
       return true
     }
+    return false;
   }
 
   moveEmpty(direction, reverse = false) {
@@ -99,6 +103,10 @@ class Puzzle {
     }
   }
 
+  isValidMove(index) {
+    return (this.rowDiffEmpty(index) == 0 || this.colDiffEmpty(index) == 0)
+  }
+
   clickTo(index) {
 
     const rowDiff = this.rowDiffEmpty(index)
@@ -118,17 +126,64 @@ class Puzzle {
     )
   }
 
-  toString() {
-    let result = ''
+//   toString() {
+//     let result = ''
+//
+//     this.board.forEach((item, index) => {
+//       result += (this.col(index) == 0 ) ? '        ' : ''
+//       result += (item == 0) ? '  '
+//               : (item < 10) ? ' ' + item : item
+//       result += (this.col(index) == this.size - 1 ) ? '\n' : ' '
+//     })
+//
+//     return result
+//   }
 
-    this.board.forEach((item, index) => {
-      result += (this.col(index) == 0 ) ? '        ' : ''
-      result += (item == 0) ? '  '
-              : (item < 10) ? ' ' + item : item
-      result += (this.col(index) == this.size - 1 ) ? '\n' : ' '
-    })
+  rowDistance = (i) => Math.abs(this.rowDiff(i, this.board[i] - 1))
+  colDistance = (i) => Math.abs(this.colDiff(i, this.board[i] - 1))
 
-    return result
+  manhattan () {
+    let distance = 0
+    for (let i = 0; i < this.range; i++) {
+      if (i == this.indexOfEmpty) {
+        continue
+      }
+      distance += this.rowDistance(i) + this.colDistance(i)
+    }
+    return distance
+  }
+
+  hamming () {
+    let nrOutOfPlace = 0
+    for (let i = 0; i < this.range; i++) {
+      if (i == this.indexOfEmpty) {
+        continue
+      }
+      if (this.board[i] !== i + 1) {
+        nrOutOfPlace++
+      }
+    }
+    return nrOutOfPlace
+  }
+
+  distances () {
+    let manhattan = 0
+    let hamming = 0
+
+    for (let i = 0; i < this.range; i++) {
+      if (i == this.indexOfEmpty) {
+        continue
+      }
+      if (this.board[i] !== i + 1) {
+        hamming++
+      }
+      manhattan += this.rowDistance(i) + this.colDistance(i)
+    }
+
+    return {
+      manhattan,
+      hamming
+    }
   }
 }
 
