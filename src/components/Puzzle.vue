@@ -1,15 +1,28 @@
 <template>
   <div>
+
+    <ImageChooser @imageChange="onImageChange" />
+    <ImageSearch @imageChange="onImageChange" />
+
     <select v-model="size">
       <option v-for="i in 8" :key="i">{{i + 2}}</option>
     </select>
+
     <button @click="onShuffle">Shuffle</button>
+
+    <label>
+      <input type="checkbox" v-model="showNr">
+      Numbers
+    </label>
+
   </div>
   <div class="container">
     <Board
       :size="size"
       :board="board"
+      :image="image"
       :show="showBoard"
+      :showNr="showNr"
       @onTileClick="onTileClick"
     />
   </div>
@@ -18,17 +31,23 @@
 <script>
 import Puzzle from "../core/puzzle.js"
 import Board from "./Board.vue"
+import ImageChooser from "./form/ImageChooser.vue"
+import ImageSearch from "./form/ImageSearch.vue"
 
 export default {
   name: 'Puzzle',
   components: {
-    Board
+    Board,
+    ImageChooser,
+    ImageSearch,
   },
   data() {
     return {
-      size: 3,
+      size: 4,
       board: [],
       showBoard: false,
+      image: '',
+      showNr: true,
     }
   },
   created() {
@@ -39,6 +58,9 @@ export default {
   },
   watch: {
     size() {
+      this.initPuzzle()
+    },
+    image() {
       this.initPuzzle()
     }
   },
@@ -59,6 +81,9 @@ export default {
     onShuffle() {
       this.puzzle.shuffle()
       this.refreshBoard()
+    },
+    onImageChange(image) {
+      this.image = image
     }
   },
 }

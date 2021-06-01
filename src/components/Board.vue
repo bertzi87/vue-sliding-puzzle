@@ -4,7 +4,7 @@
     enter-active-class="animate__animated animate__bounceInLeft"
     leave-active-class="animate__animated animate__bounceOutRight"
   >
-    <div v-if="show">
+    <div v-if="show && image">
       <transition-group
         name="puzzle-list"
         tag="ul"
@@ -13,7 +13,9 @@
           v-for="(nr, index) in board"
           :key="nr"
           :nr="nr"
+          :showNr="showNr"
           :size="size"
+          :image="image"
           @click="$emit('onTileClick', index)"
         />
       </transition-group>
@@ -26,7 +28,7 @@ import Tile from './Tile.vue'
 
 export default {
   name: 'Board',
-  props: ['size', 'board', 'show'],
+  props: ['size', 'board', 'show', 'showNr', 'image'],
   components: {
     Tile
   },
@@ -44,9 +46,5 @@ ul {
   padding: 0;
   margin: 0 auto;
   list-style-type: none;
-/*   width: 400px; */
-/*   height: 400px; */
-/*   overflow: hidden; */
-/*   border: 1px solid black; */
 }
 </style>
