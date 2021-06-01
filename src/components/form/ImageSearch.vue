@@ -13,6 +13,9 @@ export default {
       word: ''
     }
   },
+  mounted() {
+    this.getImage()
+  },
   methods: {
     async getImage() {
 
