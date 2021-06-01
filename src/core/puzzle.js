@@ -1,17 +1,14 @@
 class Puzzle {
 
-  constructor(size) {
+  constructor(size, board = false) {
 
     this.size = parseInt(size)
-    this.board = this.getSolvedBoard()
-    this.indexOfEmpty = this.size * this.size - 1
+    this.range = this.size * this.size
+    this.board = board ? board : this.getSolvedBoard()
+    this.indexOfEmpty = this.board.indexOf(0)
   }
 
-  getSolvedBoard() {
-    const board = [...Array(this.size * this.size).keys()]
-    board.push(board.shift())
-    return board;
-  }
+  getSolvedBoard = () => [...Array(this.range).keys()].map(item => item == this.range - 1 ? 0 : item + 1)
 
   col = (index) =>  index % this.size
   row = (index) => Math.floor(index / this.size)
@@ -88,7 +85,7 @@ class Puzzle {
   shuffle() {
     const directions = ['U', 'D', 'L', 'R']
     let moves = 0
-    while (moves < this.size * this.size * 100) {
+    while (moves < this.range * 100) {
       const di = Math.floor(Math.random() * 4)
       if (this.moveEmpty(directions[di])) {
         moves++
