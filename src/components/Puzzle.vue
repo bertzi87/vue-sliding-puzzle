@@ -30,6 +30,7 @@
 
     <div
       class="board"
+      :class="{rotated: is3dEnabled}"
       tabindex="0"
       @keydown.up.prevent="onKeyUp('U')"
       @keydown.down.prevent="onKeyUp('D')"
@@ -43,7 +44,6 @@
         :image="image"
         :show="showBoard"
         :showNr="showNr"
-        :enable3d="is3dEnabled"
         @onTileClick="onTileClick"
       />
     </div>
@@ -145,11 +145,18 @@ export default {
 
 <style scoped>
 .main {
-  min-height:100%
+  min-height:100%;
+  perspective: 1200px;
+}
+
+.board.rotated  {
+  transform: rotateX(30deg) translateY(-80px);
+  transform-style: preserve-3d;
 }
 
 .board {
   margin-top: 10px;
+  transition: transform 1s;
   --my-background-color: var(--lm-base-body-bg-color);
   --my-circle-color: white;
   --my-circle-bg-color: rgba(0, 0, 0, .3);

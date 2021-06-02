@@ -1,8 +1,5 @@
 <template>
-  <li
-    :style="style"
-    :class="{validMove: isValidMove}"
-  ><span v-show="showNr">{{ nr }}</span></li>
+  <li :style="style"><span v-show="showNr">{{ nr }}</span></li>
 </template>
 
 <script>
@@ -38,15 +35,15 @@ li {
   justify-content: center;
   align-items: center;
   float: left;
-  border: 1px solid;
-  border-width: 0 0 1px 1px;
-  border-color: var(--my-background-color);
   box-sizing: border-box;
   user-select: none;
   border-radius: 5%;
   margin-bottom: 0;
-  box-shadow: 1px 1px 1px rgba(0,0,0,0.8);
-  transition: box-shadow 200ms ease-out, transform 200ms ease-out;
+
+  box-shadow: 4px 4px 5px rgba(0,0,0,0.2);
+  border: 1px solid;
+  border-width: 0 0 1px 1px;
+  border-color: var(--my-background-color);
 }
 
 li span {
@@ -62,13 +59,8 @@ li span {
   opacity: .33;
 }
 
-li.validMove:hover span {
-  opacity: .66;
+li:hover span {
+  opacity: .75;
 }
 
-li.validMove:hover {
-  transform: translate3d(0, 0, 10px);
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
-  transition: box-shadow 200ms ease-in, transform 200ms ease-in;
-}
 </style>
