@@ -12,7 +12,6 @@
         >
           <Tile
             v-for="(nr, index) in board"
-            :puzzle="puzzle"
             :key="nr"
             :nr="nr"
             :isValidMove="puzzle.isValidMove(index)"
@@ -20,6 +19,7 @@
             :size="size"
             :image="image"
             :validMove="false"
+            class="test-class"
             @click="$emit('onTileClick', index)"
           />
         </transition-group>
@@ -29,6 +29,13 @@
 </template>
 
 <script>
+function getOffsetPosition() {
+  return {
+    left: this.offsetLeft,
+    top: this.offsetTop
+  };
+}
+
 import Tile from './Tile.vue'
 
 export default {
@@ -37,26 +44,28 @@ export default {
   components: {
     Tile
   },
-  methods: {
-//     beforeEnter(el) {
-//       console.log('before enter')
-//       el.style.transform = "rotate(45deg)"
-//     },
-//     beforeLeave(el) {
-//       console.log('before leave')
-//       el.style.transform = "rotate(45deg)"
-//     },
-//     enter() {
-//       console.log('enter')
-//     }
+  watch: {
+    board() {
+      document.getElementsByClassName("test-class").forEach(
+        el => {
+          el.getBoundingClientRect = getOffsetPosition
+        }
+      );
+    },
   }
 }
 </script>
 
 <style scoped>
+.puzzle-list {
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+}
+
 .puzzle-list-move {
-  transition: transform 200ms;
-  transform: translate3d(0, 0, 10px);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
+  transform: translate3d(0, 0, 15px);
+  transition: transform 150ms ease-in, box-shadow 150ms ease-in;
 }
 
 ul {
@@ -68,7 +77,7 @@ ul {
 }
 
 .wrapper {
-  perspective: 1000px;
+  perspective: 1200px;
 }
 
 .list {
@@ -76,7 +85,8 @@ ul {
 }
 
 .enable3d .list {
-  transform: rotateX(30deg);
+  transform: rotateX(30deg) translateY(-80px);
+/*   transform: translateX(10px); */
   transform-style: preserve-3d;
 }
 </style>

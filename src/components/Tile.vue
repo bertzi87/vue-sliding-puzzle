@@ -46,12 +46,12 @@ li {
   border-radius: 5%;
   margin-bottom: 0;
   box-shadow: 1px 1px 1px rgba(0,0,0,0.8);
-  transition: box-shadow 0.3s, transform 0.3s;
+  transition: box-shadow 200ms ease-out, transform 200ms ease-out;
 }
 
 li span {
   color: var(--my-circle-color);
-  border: 1px solid var(--my-circle-color);
+/*   border: 1px solid var(--my-circle-color); */
   border-radius: 50%;
   width: 1.62em;
   height: 1.62em;
@@ -62,12 +62,13 @@ li span {
   opacity: .33;
 }
 
-li:hover span {
-  opacity: .75;
+li.validMove:hover span {
+  opacity: .66;
 }
 
 li.validMove:hover {
   transform: translate3d(0, 0, 10px);
   box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
+  transition: box-shadow 200ms ease-in, transform 200ms ease-in;
 }
 </style>
