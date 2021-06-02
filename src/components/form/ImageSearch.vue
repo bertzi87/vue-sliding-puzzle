@@ -11,7 +11,7 @@
 import axios from 'axios'
 
 export default {
-  emits: ['imageChange'],
+  emits: ['imageChange', 'beforeImageChange'],
   data() {
     return {
       word: ''
@@ -29,6 +29,7 @@ export default {
         return
       }
 
+      this.$emit('beforeImageChange')
       // get an url based on word and window size
       const size = this.getMinWindowSize()
       const search = this.word.replace(' ', ',')

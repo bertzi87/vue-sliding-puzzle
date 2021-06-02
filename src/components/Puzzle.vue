@@ -3,10 +3,10 @@
 
     <div class="container my-row">
         <ImageChooser @imageChange="onImageChange" />
-        <ImageSearch @imageChange="onImageChange" />
+        <ImageSearch @beforeImageChange="onBeforeImageChange" @imageChange="onImageChange" />
 
         <select v-model="size" class="form-control">
-          <option v-for="i in 8" :key="i">{{i + 2}}</option>
+          <option v-for="i in 6" :key="i">{{i + 2}}</option>
         </select>
 
         <button class="btn" @click="onShuffle">Shuffle</button>
@@ -44,6 +44,7 @@
         :image="image"
         :show="showBoard"
         :showNr="showNr"
+        :isSearching="isSearching"
         @onTileClick="onTileClick"
       />
     </div>
@@ -66,7 +67,7 @@ export default {
   },
   data() {
     return {
-      size: 4,
+      size: 8,
       board: [],
       showBoard: false,
       image: '',
@@ -74,24 +75,43 @@ export default {
       isDark: false,
       isSolving: false,
       is3dEnabled: false,
+      isSearching: false,
     }
   },
   watch: {
     size() {
+      this.showBoard = false
       this.initPuzzle()
+      setTimeout(() => { this.showBoard = true }, 500)
     },
     image() {
-      this.initPuzzle()
+      if (!this.isSearching) {
+        this.board = []
+        this.isSearching = true
+        setTimeout(() => {
+          this.initPuzzle()
+          this.isSearching = false
+        }, 300)
+      } else {
+        this.initPuzzle()
+        this.isSearching = false
+      }
+      this.showBoard = true
     }
   },
   methods: {
     initPuzzle() {
-      this.showBoard = false
 //       this.board = (new Puzzle(this.size)).getSolvedBoard()
 //       this.puzzle = new Puzzle(this.size, this.board)
       this.puzzle = new Puzzle(this.size)
       this.refreshBoard()
-      setTimeout(() => { this.showBoard = true }, 500)
+    },
+    onBeforeImageChange() {
+      this.isSearching = true
+      this.board = []
+    },
+    onImageChange(image) {
+      this.image = image
     },
     refreshBoard() {
       this.board = [...this.puzzle.board]
@@ -136,9 +156,6 @@ export default {
         }
       }
     },
-    onImageChange(image) {
-      this.image = image
-    }
   },
 }
 </script>
