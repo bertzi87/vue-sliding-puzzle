@@ -79,7 +79,9 @@ export default {
       setTimeout(() => { this.showBoard = true }, 500)
     },
     image() {
-      this.board = []
+      if (this.gameState !== 'isLoading') {
+        this.board = []
+      }
       setTimeout(() => { this.initPuzzle() }, 500)
       this.showBoard = true
     }
