@@ -135,9 +135,8 @@ export default {
       console.log("Visited Nodes ", solver.visitedNr)
       console.log(res.path)
 
-      this.isSolving = true
       for (const dir of res.path) {
-        if (this.isSolving) {
+        if (this.gameState == 'isSolving') {
           await this.moveToWithTimeout(dir)
         }
       }
