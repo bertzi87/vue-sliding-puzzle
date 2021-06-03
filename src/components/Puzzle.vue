@@ -13,12 +13,12 @@
         <button class="btn" @click="onSolve">Solve</button>
 
         <div class="custom-switch">
-          <input v-model="showNr" type="checkbox" id="checkbox-4" value="">
-          <label for="checkbox-4">Numbers</label>
+          <input v-model="showNr" type="checkbox" id="nr-switch" value="">
+          <label for="nr-switch">Numbers</label>
         </div>
 
         <div class="custom-switch">
-          <input v-model="is3dEnabled" type="checkbox" id="3d-switch">
+          <input v-model="boardIsRotated" type="checkbox" id="3d-switch">
           <label for="3d-switch">{{ is3dEnabled ? "2D" : "3D" }}</label>
         </div>
 
@@ -28,14 +28,9 @@
         </div>
     </div>
 
-    <div
-      class="board"
-      :class="{rotated: is3dEnabled}"
-      tabindex="0"
-      @keydown.up.prevent="onKeyUp('U')"
-      @keydown.down.prevent="onKeyUp('D')"
-      @keydown.left.prevent="onKeyUp('L')"
-      @keydown.right.prevent="onKeyUp('R')"
+    <div class="board" :class="{rotated: boardIsRotated}" tabindex="0"
+      @keydown.up.prevent="onKeyUp('U')" @keydown.down.prevent="onKeyUp('D')"
+      @keydown.left.prevent="onKeyUp('L')" @keydown.right.prevent="onKeyUp('R')"
     >
       <Board
         :size="size"
@@ -44,7 +39,7 @@
         :image="image"
         :show="showBoard"
         :showNr="showNr"
-        :isSearching="isSearching"
+        :gameState="gameState"
         @onTileClick="onTileClick"
       />
     </div>
@@ -67,15 +62,14 @@ export default {
   },
   data() {
     return {
-      size: 8,
+      size: 4,
       board: [],
       showBoard: false,
       image: '',
       showNr: true,
       isDark: false,
-      isSolving: false,
-      is3dEnabled: false,
-      isSearching: false,
+      boardIsRotated: false,
+      gameState: '', // isLoading, isStarted, isSolving, isShuffling,
     }
   },
   watch: {
@@ -85,29 +79,19 @@ export default {
       setTimeout(() => { this.showBoard = true }, 500)
     },
     image() {
-      if (!this.isSearching) {
-        this.board = []
-        this.isSearching = true
-        setTimeout(() => {
-          this.initPuzzle()
-          this.isSearching = false
-        }, 300)
-      } else {
-        this.initPuzzle()
-        this.isSearching = false
-      }
+      this.board = []
+      setTimeout(() => { this.initPuzzle() }, 500)
       this.showBoard = true
     }
   },
   methods: {
     initPuzzle() {
-//       this.board = (new Puzzle(this.size)).getSolvedBoard()
-//       this.puzzle = new Puzzle(this.size, this.board)
+      this.gameState = 'isStarted'
       this.puzzle = new Puzzle(this.size)
       this.refreshBoard()
     },
     onBeforeImageChange() {
-      this.isSearching = true
+      this.gameState = 'isLoading'
       this.board = []
     },
     onImageChange(image) {
@@ -117,17 +101,18 @@ export default {
       this.board = [...this.puzzle.board]
     },
     onTileClick(index) {
+      this.gameState = 'isStarted'
       this.puzzle.clickTo(index)
-      this.isSolving = false
       this.refreshBoard()
     },
     onKeyUp(direction) {
+      this.gameState = 'isStarted'
       this.puzzle.move(direction)
       this.refreshBoard()
     },
     onShuffle() {
+      this.gameState = 'isShuffling'
       this.puzzle.shuffle()
-      this.isSolving = false
       this.refreshBoard()
     },
     moveToWithTimeout(dir) {
@@ -136,10 +121,11 @@ export default {
           this.puzzle.moveEmpty(dir)
           this.refreshBoard()
           resolve()
-        }, 200)
+        }, 100)
       })
     },
     async onSolve() {
+      this.gameState = 'isSolving'
       const solver = new Solver(this.puzzle)
 
       console.time("solver")
@@ -173,7 +159,7 @@ export default {
 
 .board {
   margin-top: 10px;
-  transition: transform 1s;
+  transition: transform 300ms ease-out;
   --my-background-color: var(--lm-base-body-bg-color);
   --my-circle-color: white;
   --my-circle-bg-color: rgba(0, 0, 0, .3);
