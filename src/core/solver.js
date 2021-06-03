@@ -1,6 +1,7 @@
 import FastPriorityQueue from 'fastpriorityqueue'
 import _ from 'lodash'
-import Puzzle from './puzzle_old.js'
+
+import Puzzle from './puzzle.js'
 // import HashSet from './hashset'
 
 export default class Solver {
@@ -98,9 +99,9 @@ export default class Solver {
 
     directions.forEach(direction => {
 
-      const puzzle = new Puzzle(this.puzzle.size, node.board)
+      const puzzle = new Puzzle(this.puzzle.size, [...node.board])
 
-      if (puzzle.emptyMoveTo(direction)) {
+      if (puzzle.moveEmpty(direction)) {
 
         const newNode = {
           board: puzzle.board,

@@ -1,4 +1,4 @@
-class Puzzle {
+export default class Puzzle {
 
   constructor(size, board = false) {
 
@@ -186,5 +186,3 @@ class Puzzle {
     }
   }
 }
-
-module.exports = Puzzle

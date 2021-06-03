@@ -1,4 +1,4 @@
-const Puzzle = require('./puzzle.js')
+import Puzzle from './puzzle.js'
 
 const solved3 = [
   1,2,3,

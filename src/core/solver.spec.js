@@ -1,5 +1,5 @@
-import Solver from '../../src/core/solver'
-import Puzzle from '../../src/core/puzzle_old'
+import Solver from './solver.js'
+import Puzzle from './puzzle.js'
 
 describe('A* Solver', () => {
 
@@ -17,7 +17,7 @@ describe('A* Solver', () => {
     const node = solver.solve()
 
     node.path.forEach((direction) => {
-      puzzle.emptyMoveTo(direction)
+      puzzle.moveEmpty(direction)
     })
     expect(puzzle.board).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 0])
   })
@@ -32,7 +32,7 @@ describe('A* Solver', () => {
     const node = solver.solve()
 
     node.path.forEach((direction) => {
-      puzzle.emptyMoveTo(direction)
+      puzzle.moveEmpty(direction)
     })
 
     expect(puzzle.board).toEqual(puzzle.getSolvedBoard())
@@ -50,7 +50,7 @@ describe('A* Solver', () => {
 //     const node = solver.solve()
 //
 //     node.path.forEach((direction) => {
-//       puzzle.emptyMoveTo(direction)
+//       puzzle.moveEmpty(direction)
 //     })
 //
 //     expect(puzzle.board).toEqual(puzzle.getSolvedBoard())
