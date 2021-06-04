@@ -6,19 +6,17 @@ describe('A* Solver', () => {
   it('should solve 3x3 in 1 step', () => {
     const puzzle = new Puzzle(3, [1, 2, 3, 4, 5, 0, 7, 8, 6])
     const solver = new Solver(puzzle)
-    const node = solver.solve()
-    expect(node.path.toString()).toMatch('D')
-    expect(node.level).toEqual(1)
+    const path = solver.solve()
+    expect(path.toString()).toMatch('D')
   })
 
   it('should solve 3x3 in 31 step', () => {
     const puzzle = new Puzzle(3, [6, 4, 7, 8, 5, 0, 3, 2, 1])
     const solver = new Solver(puzzle)
-    const node = solver.solve()
-
-    node.path.forEach((direction) => {
+    solver.solve().forEach((direction) => {
       puzzle.moveEmpty(direction)
     })
+
     expect(puzzle.board).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 0])
   })
 
@@ -29,9 +27,7 @@ describe('A* Solver', () => {
       15, 14, 0, 4,
       6, 9, 13, 12])
     const solver = new Solver(puzzle)
-    const node = solver.solve()
-
-    node.path.forEach((direction) => {
+    solver.solve().forEach((direction) => {
       puzzle.moveEmpty(direction)
     })
 

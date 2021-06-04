@@ -1,52 +1,74 @@
-import FastPriorityQueue from 'fastpriorityqueue'
-import _ from 'lodash'
+import Heap from 'qheap'
+// import FastPriorityQueue from 'fastpriorityqueue'
 
 import Puzzle from './puzzle.js'
-// import HashSet from './hashset'
 
 export default class Solver {
 
   constructor (puzzle) {
     this.puzzle = puzzle
-//     this.visited = []
-    this.visited = {}
-//     this.visited = new HashSet();
-
-    this.puzzle1 = new Puzzle(puzzle.size)
-    this.puzzle2 = new Puzzle(puzzle.size)
-
+    this.size = puzzle.size
     this.visitedNr = 0
 
-    this.queue = new FastPriorityQueue((a, b) => {
-//       return this.compareFastest(a, b)
-//       return this.compareShortest(a, b)
-      return this.comparePrinceton(a, b)
-    })
+    //     this.visited = []
+//     this.visited = {}
+    this.visited = new Set();
+    this.queue = new Heap({
+      comparBefore: (a, b) =>
+        this.compareManhattan(a,b)
+//         this.compareManhattanShortest(a,b)
+//         this.compareManhattanAndHamming(a,b)
+    });
+
+//     this.queue = new FastPriorityQueue((a, b) =>
+//       this.compareManhattan(a,b)
+//    this.compareManhattanShortest(a,b)
+//    this.compareManhattanAndHamming(a,b)
+//     )
+
   }
 
-  comparePrinceton (a, b) {
-    this.puzzle1.board = a.board
-    this.puzzle2.board = b.board
-    const distance1 = this.puzzle1.distances()
-    const distance2 = this.puzzle2.distances()
+  rowDistance = (board, i) => Math.abs(i % this.size - (board[i] - 1) % this.size)
+  colDistance = (board, i) => Math.abs(Math.floor(i / this.size) - Math.floor((board[i] - 1) / this.size))
 
-    if (distance1.manhattan == distance2.manhattan) {
-        return distance1.hamming < distance2.hamming
+  manhattan(board) {
+    let distance = 0
+    for (let i = 0; i < board.length; i++) {
+      if (i == board.indexOf(0)) {
+        continue
+      }
+      distance += this.rowDistance(board, i) + this.colDistance(board, i)
     }
-    return distance1.manhattan < distance2.manhattan
+    return distance
   }
 
-  compareShortest (a, b) {
-    this.puzzle1.board = a.board
-    this.puzzle2.board = b.board
-    return this.puzzle1.manhattan() + a.level < this.puzzle2.manhattan() + b.level
+  hamming(board) {
+    let nrOutOfPlace = 0
+    for (let i = 0; i < board.length; i++) {
+      if (i == board.indexOf(0)) {
+        continue
+      }
+      if (board[i] !== i + 1) {
+        nrOutOfPlace++
+      }
+    }
+    return nrOutOfPlace
   }
 
-  compareFastest (a, b) {
-    this.puzzle1.board = a.board
-    this.puzzle2.board = b.board
-    const manhattan1 = this.puzzle1.manhattan()
-    const manhattan2 = this.puzzle2.manhattan()
+  // from princeton course
+  compareManhattanAndHamming(a, b) {
+    const manhattan1 = this.manhattan(a.board)
+    const manhattan2 = this.manhattan(b.board)
+
+    if (manhattan1 == manhattan2) {
+      return this.hamming(a.board) < this.hamming(b.board)
+    }
+    return manhattan1 < manhattan2
+  }
+
+  compareManhattan(a, b) {
+    const manhattan1 = this.manhattan(a.board)
+    const manhattan2 = this.manhattan(b.board)
 
     if (manhattan1 == manhattan2) {
       return a.level < b.level
@@ -54,29 +76,43 @@ export default class Solver {
     return manhattan1 < manhattan2
   }
 
+  compareManhattanShortest(a, b) {
+    return this.manhattan(a.board) + a.level < this.manhattan(b.board) + b.level
+  }
+
   solve () {
     const initialNode = {
       board: this.puzzle.board,
-      path: [],
+//       path: [],
+      prevNode: null,
+      dir: '',
       level: 0
     }
 
     const solvedString = this.puzzle.getSolvedBoard().join('.')
 
-    this.queue.add(initialNode)
+//     this.queue.add(initialNode)
+    this.queue.insert(initialNode)
 //     this.visited.push(initialNode.board.toString())
-    _.set(this.visited, initialNode.board.join('.'), true)
-//     this.visited.add(initialNode.board.join('.'))
+    this.visited.add(initialNode.board.join('.'))
 
     let steps = 0
 //     const t0 = performance.now()
 
-    while (!this.queue.isEmpty()) {
-      if (steps > 200000) {
-        break
-      }
+//     while (!this.queue.isEmpty()) {
+    while (this.queue.length > 0) {
 
-      const current = this.queue.poll()
+//       const current = this.queue.poll()
+      const current = this.queue.remove()
+
+      if (steps % 10000 == 0) {
+        console.timeEnd('iteration')
+        console.log('iterations:' + steps, 'levels:' + current.level, current.board)
+        console.time('iteration')
+//         console.time('trim')
+//         this.queue.trim()
+//         console.timeEnd('trim')
+      }
 
 //       if (max < current.level) {
 //         max = current.level
@@ -86,7 +122,18 @@ export default class Solver {
 //       }
 
       if (current.board.join('.') == solvedString) {
-        return current
+
+//         return current
+
+        const reverse = []
+
+        let node = current
+        while (node.prevNode !== null) {
+          reverse.push(node.dir)
+          node = node.prevNode
+        }
+
+        return reverse.reverse()
       }
 
       this.expandNode(current)
@@ -105,8 +152,17 @@ export default class Solver {
 
         const newNode = {
           board: puzzle.board,
-          path: [...node.path, direction],
+//           path: [...node.path, direction],
+          prevNode: node,
+          dir: direction,
           level: node.level + 1,
+        }
+
+        if (!this.visited.has(puzzle.board.join('.'))) {
+          this.visited.add(puzzle.board.join('.'))
+//           this.queue.add(newNode)
+          this.queue.insert(newNode)
+          this.visitedNr += 1
         }
 
 //         if (!this.visited.includes(puzzle.board.toString())) {
@@ -115,17 +171,6 @@ export default class Solver {
 //           this.queue.add(newNode)
 //         }
 
-        if (_.get(this.visited, puzzle.board, false) === false) {
-          this.visitedNr += 1
-          _.set(this.visited, puzzle.board.join('.'), true)
-          this.queue.add(newNode)
-        }
-
-//         if (!this.visited.contains(puzzle.board.join('.'))) {
-//           this.visitedNr += 1
-//           this.visited.add(puzzle.board.join('.'))
-//           this.queue.add(newNode)
-//         }
       }
     })
   }

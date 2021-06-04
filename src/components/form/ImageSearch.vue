@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   emits: ['imageChange', 'beforeImageChange'],
   data() {
@@ -33,8 +31,8 @@ export default {
       // get an url based on word and window size
       const size = this.getMinWindowSize()
       const search = this.word.replace(' ', ',')
-      const response = await axios.get(`https://source.unsplash.com/featured/${size}x${size}/?${search}`)
-      this.$emit('imageChange', response.request.responseURL)
+      const response = await fetch(`https://source.unsplash.com/featured/${size}x${size}/?${search}`)
+      this.$emit('imageChange', response.url)
     },
     getMinWindowSize() {
       return Math.min(window.innerHeight, window.innerWidth)

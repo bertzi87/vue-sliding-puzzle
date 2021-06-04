@@ -19,7 +19,7 @@
 
         <div class="custom-switch">
           <input v-model="boardIsRotated" type="checkbox" id="3d-switch">
-          <label for="3d-switch">{{ is3dEnabled ? "2D" : "3D" }}</label>
+          <label for="3d-switch">{{ boardIsRotated ? "2D" : "3D" }}</label>
         </div>
 
         <div class="custom-switch">
@@ -131,13 +131,12 @@ export default {
       const solver = new Solver(this.puzzle)
 
       console.time("solver")
-      const res = solver.solve()
+      const path = solver.solve()
       console.timeEnd("solver")
 
-      console.log("Visited Nodes ", solver.visitedNr)
-      console.log(res.path)
+      console.log(path)
 
-      for (const dir of res.path) {
+      for (const dir of path) {
         if (this.gameState == 'isSolving') {
           await this.moveToWithTimeout(dir)
         }
