@@ -1,7 +1,7 @@
 <template>
   <div class="main" :class="{'dark-mode': isDark}">
 
-    <div class="container my-row">
+    <div class="container form">
         <ImageChooser @imageChange="onImageChange" />
         <ImageSearch @beforeImageChange="onBeforeImageChange" @imageChange="onImageChange" />
 
@@ -123,7 +123,7 @@ export default {
           this.puzzle.moveEmpty(dir)
           this.refreshBoard()
           resolve()
-        }, 100)
+        }, 50)
       })
     },
     async onSolve() {
@@ -148,12 +148,13 @@ export default {
 
 <style scoped>
 .main {
-  min-height:100%;
-  perspective: 1200px;
+  min-height: 100%;
+  min-width: 100%;
+  perspective: 800px;
 }
 
 .board.rotated  {
-  transform: rotateX(30deg) translateY(-80px);
+  transform: rotateX(45deg) translateY(-40px);
   transform-style: preserve-3d;
 }
 
@@ -171,13 +172,13 @@ export default {
   --my-circle-bg-color: rgba(255, 255, 255, .3);
 }
 
-.my-row {
+.form {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-flow: row wrap;
 }
-.my-row > * {
+.form > * {
   width: auto;
   margin: 5px !important;
 }

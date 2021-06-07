@@ -14,8 +14,13 @@ export default {
 </script>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -24,5 +29,6 @@ body {
   text-align: center;
 /*   max-height: 100vh; */
   height: 100%;
+  width: 100%;
 }
 </style>

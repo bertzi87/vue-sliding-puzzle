@@ -1,4 +1,5 @@
-export default class Puzzle {
+// export default class Puzzle {
+module.exports = class Puzzle {
 
   constructor(size, board = false) {
 
@@ -8,7 +9,16 @@ export default class Puzzle {
     this.indexOfEmpty = this.board.indexOf(0)
   }
 
-  getSolvedBoard = () => [...Array(this.range).keys()].map(item => item == this.range - 1 ? 0 : item + 1)
+//   getSolvedBoard = () => [...Array(this.range).keys()].map(item => item == this.range - 1 ? 0 : item + 1)
+
+  getSolvedBoard = () => {
+    const solved = []
+    for (let i = 0; i < this.range - 1; i++) {
+      solved.push(i + 1)
+    }
+    solved[this.range - 1] = 0
+    return solved
+  }
 
   col = (index) =>  index % this.size
   row = (index) => Math.floor(index / this.size)
@@ -67,17 +77,17 @@ export default class Puzzle {
 
   moveEmpty(direction, reverse = false) {
     switch(direction) {
-      case 'left':
       case 'L':
+      case 'left':
         return (reverse) ? this.moveEmptyRight() : this.moveEmptyLeft()
-      case 'right':
       case 'R':
+      case 'right':
         return (reverse) ? this.moveEmptyLeft() : this.moveEmptyRight()
-      case 'up':
       case 'U':
+      case 'up':
         return (reverse) ? this.moveEmptyDown() : this.moveEmptyUp()
-      case 'down':
       case 'D':
+      case 'down':
         return (reverse) ? this.moveEmptyUp() : this.moveEmptyDown()
     }
   }

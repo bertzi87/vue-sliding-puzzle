@@ -41,11 +41,9 @@ li {
   justify-content: center;
   align-items: center;
   float: left;
-  box-sizing: border-box;
   user-select: none;
   border-radius: 5%;
   margin-bottom: 0;
-
   box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.2);
   border: 1px solid;
 /*   border-width: 0 0 1px 1px; */
