@@ -12,8 +12,14 @@ describe('A* Solver', () => {
 
   it('should solve 3x3 in 31 step', () => {
     const puzzle = new Puzzle(3, [6, 4, 7, 8, 5, 0, 3, 2, 1])
-    const solver = new Solver(puzzle)
-    solver.solve().forEach((direction) => {
+
+    // shortest
+    const solver = new Solver(puzzle, true)
+    const path = solver.solve()
+
+    expect(path.length).toEqual(31)
+
+    path.forEach((direction) => {
       puzzle.moveEmpty(direction)
     })
 

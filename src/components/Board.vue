@@ -14,12 +14,12 @@
     >
       <Tile
         class="puzzle-list-item"
-        v-for="(nr, index) in board"
+        v-for="(nr, index) in puzzle.board"
+        :puzzle="puzzle"
         :key="nr"
         :nr="nr"
-        :isValidMove="puzzle.isValidMove(index)"
+        :index="index"
         :showNr="showNr"
-        :size="size"
         :image="image"
         :data-index="index"
         :data-nr="nr"
@@ -43,7 +43,7 @@ function getOffsetPosition() {
 
 export default {
   name: 'Board',
-  props: ['size', 'board', 'show', 'showNr', 'image', 'puzzle', 'gameState'],
+  props: ['show', 'showNr', 'image', 'puzzle', 'gameState'],
   data() {
     return {
       animation: {
@@ -60,22 +60,22 @@ export default {
       el.style.opacity = 0
     },
     enter(el, done) {
-      gsap.to(el, getGSAPVars(false, el.dataset.nr, el.dataset.index, this.size, done))
+      gsap.to(el, getGSAPVars(false, el.dataset.nr, el.dataset.index, this.puzzle.size, done))
     },
     leave(el, done) {
-      gsap.to(el, getGSAPVars(true, el.dataset.nr, el.dataset.index, this.size, done))
+      gsap.to(el, getGSAPVars(true, el.dataset.nr, el.dataset.index, this.puzzle.size, done))
     }
   },
   computed: {
     transitionGroupSpeed() {
       if (this.gameState == 'isShuffling') {
-        return (200 + this.size * 25) + 'ms'
+        return (200 + this.puzzle.size * 25) + 'ms'
       }
       return this.gameState == 'isSolving' ? '100ms' : '200ms'
     }
   },
   watch: {
-    size(size, oldSize) {
+    'puzzle.size'(size, oldSize) {
       this.animation = (size < oldSize) ? {
         enter: 'animate__bounceInLeft',
         leave: 'animate__bounceOutRight',
@@ -84,12 +84,15 @@ export default {
         leave: 'animate__bounceOutLeft',
       }
     },
-    board() {
-      document.getElementsByClassName("puzzle-list-item").forEach(
-        el => {
-          el.getBoundingClientRect = getOffsetPosition
-        }
-      );
+    'puzzle.board': {
+      handler() {
+        document.getElementsByClassName("puzzle-list-item").forEach(
+          el => {
+            el.getBoundingClientRect = getOffsetPosition
+          }
+        );
+      },
+      deep: true
     },
   }
 }
@@ -103,8 +106,8 @@ export default {
 }
 
 ul {
-  width: 100vmin;
-  height: 100vmin;
+  width: calc(100vmin + 2px);
+  height: calc(100vmin + 2px);
   padding: 0;
   margin: 0 auto;
   list-style-type: none;

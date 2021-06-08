@@ -5,19 +5,16 @@ import Puzzle from './puzzle.js'
 
 export default class Solver {
 
-  constructor (puzzle) {
+  constructor (puzzle, shortest = false) {
     this.puzzle = puzzle
     this.size = puzzle.size
-    this.visitedNr = 0
+//     this.visitedNr = 0
 
     //     this.visited = []
 //     this.visited = {}
     this.visited = new Set();
     this.queue = new Heap({
-      comparBefore: (a, b) =>
-        this.compareManhattan(a,b)
-//         this.compareManhattanShortest(a,b)
-//         this.compareManhattanAndHamming(a,b)
+      comparBefore: (a, b) => shortest ? this.compareManhattanShortest(a,b) : this.compareManhattan(a,b)
     });
 
 //     this.queue = new FastPriorityQueue((a, b) =>
@@ -162,7 +159,7 @@ export default class Solver {
           this.visited.add(puzzle.board.join('.'))
 //           this.queue.add(newNode)
           this.queue.insert(newNode)
-          this.visitedNr += 1
+//           this.visitedNr += 1
         }
 
 //         if (!this.visited.includes(puzzle.board.toString())) {

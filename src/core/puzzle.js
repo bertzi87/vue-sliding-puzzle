@@ -99,12 +99,16 @@ module.exports = class Puzzle {
   shuffle() {
     const directions = ['U', 'D', 'L', 'R']
     let moves = 0
+    // to avoud slow reactivity use a temporary board
+    const copy = new Puzzle(this.size, [...this.board])
     while (moves < this.range * 100) {
       const di = Math.floor(Math.random() * 4)
-      if (this.moveEmpty(directions[di])) {
+      if (copy.moveEmpty(directions[di])) {
         moves++
       }
     }
+    this.board = [...copy.board]
+    this.indexOfEmpty = copy.indexOfEmpty
   }
 
   moveEmptyMultiple(times, direction) {

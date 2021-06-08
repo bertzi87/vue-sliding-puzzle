@@ -1,6 +1,6 @@
 <template>
   <li
-    :class="{isValid: isValidMove}"
+    :class="{isValid: puzzle.isValidMove(index)}"
     :style="style"
   ><span v-show="showNr">{{ nr }}</span></li>
 </template>
@@ -9,21 +9,21 @@
 
 export default {
   name: 'Tile',
-  props: ['nr', 'size', 'showNr', 'image', 'isValidMove'],
+  props: ['nr', 'index', 'puzzle', 'showNr', 'image'],
   computed: {
     percentage() {
-      return 100 / (this.size - 1)
+      return 100 / (this.puzzle.size - 1)
     },
     style() {
       const style = {
         backgroundImage: `url(${this.image})`,
-        backgroundSize: 100 * this.size + '%',
-        backgroundPositionX: this.percentage * ((this.nr - 1) % this.size) + '%',
-        backgroundPositionY: this.percentage * (Math.floor((this.nr - 1) / this.size)) + '%',
-        height: `calc(100vmin/${this.size})`,
-        width: `calc(100vmin/${this.size})`,
-        fontSize: `max(calc(100vmin/${this.size}/5), 1em)`,
-        cursor: this.isValidMove ? 'pointer': 'auto',
+        backgroundSize: 100 * this.puzzle.size + '%',
+        backgroundPositionX: this.percentage * ((this.nr - 1) % this.puzzle.size) + '%',
+        backgroundPositionY: this.percentage * (Math.floor((this.nr - 1) / this.puzzle.size)) + '%',
+        height: `calc(100vmin/${this.puzzle.size})`,
+        width: `calc(100vmin/${this.puzzle.size})`,
+        fontSize: `max(calc(100vmin/${this.puzzle.size}/5), 1em)`,
+        cursor: this.puzzle.isValidMove(this.index) ? 'pointer': 'auto',
       }
       if (this.nr == 0) {
         style.opacity = 0
@@ -55,7 +55,8 @@ li.isValid:hover {
 }
 
 li.isValid:hover span {
-  opacity: .75;
+/*   opacity: .75; */
+  background-color: var(--my-circle-bg-color-hover);
 }
 
 li span {
@@ -68,7 +69,7 @@ li span {
   align-items: center;
   justify-content: center;
   background-color: var(--my-circle-bg-color);
-  opacity: .33;
+  opacity: .9;
 }
 
 </style>

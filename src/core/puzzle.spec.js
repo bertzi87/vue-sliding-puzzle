@@ -10,7 +10,7 @@ const sum = (array) => {
   return array.reduce((sum, item) => sum + item)
 }
 
-describe('Board creation', () => {
+describe('Board creation and shuffle', () => {
 
   for (let size = 3; size <= 10; size++) {
 
@@ -35,6 +35,7 @@ describe('Board creation', () => {
       expect(puzzle.board.length).toEqual(solved.length)
       expect(sumOld).toEqual(sumNew)
       expect(puzzle.board).not.toEqual(solved)
+      expect(puzzle.indexOfEmpty).toEqual(puzzle.board.indexOf(0))
     })
   }
 })

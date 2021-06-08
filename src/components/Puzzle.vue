@@ -12,20 +12,9 @@
         <button class="btn" @click="onShuffle">Shuffle</button>
         <button class="btn" @click="onSolve">Solve</button>
 
-        <div class="custom-switch">
-          <input v-model="showNr" type="checkbox" id="nr-switch" value="">
-          <label for="nr-switch">Numbers</label>
-        </div>
-
-        <div class="custom-switch">
-          <input v-model="boardIsRotated" type="checkbox" id="3d-switch">
-          <label for="3d-switch">{{ boardIsRotated ? "2D" : "3D" }}</label>
-        </div>
-
-        <div class="custom-switch">
-          <input v-model="isDark" type="checkbox" id="theme-switch">
-          <label for="theme-switch">{{ isDark ? "Light" : "Dark" }}</label>
-        </div>
+        <Switch v-model:value="showNr" id="nr-switch" >Numbers</Switch>
+        <Switch v-model:value="boardIsRotated" id="3d-switch" >{{ boardIsRotated ? "2D" : "3D" }}</Switch>
+        <Switch v-model:value="isDark" id="theme-switch" >{{ isDark ? "Light" : "Dark" }}</Switch>
     </div>
 
     <div class="board" :class="{rotated: boardIsRotated}" tabindex="0"
@@ -33,8 +22,6 @@
       @keydown.left.prevent="onKeyUp('L')" @keydown.right.prevent="onKeyUp('R')"
     >
       <Board
-        :size="size"
-        :board="board"
         :puzzle="puzzle"
         :image="image"
         :show="showBoard"
@@ -52,6 +39,7 @@ import Solver from '../core/solver.js'
 import Board from "./Board.vue"
 import ImageChooser from "./form/ImageChooser.vue"
 import ImageSearch from "./form/ImageSearch.vue"
+import Switch from "./form/Switch.vue"
 
 export default {
   name: 'Puzzle',
@@ -59,11 +47,12 @@ export default {
     Board,
     ImageChooser,
     ImageSearch,
+    Switch,
   },
   data() {
     return {
       size: 4,
-      board: [],
+      puzzle: {},
       showBoard: false,
       image: '',
       showNr: true,
@@ -80,7 +69,7 @@ export default {
     },
     image() {
       if (this.gameState !== 'isLoading') {
-        this.board = []
+        this.puzzle.board = []
       }
       setTimeout(() => { this.initPuzzle() }, 500)
       this.showBoard = true
@@ -90,38 +79,30 @@ export default {
     initPuzzle() {
       this.gameState = 'isStarted'
       this.puzzle = new Puzzle(this.size)
-      this.refreshBoard()
     },
     onBeforeImageChange() {
       this.gameState = 'isLoading'
-      this.board = []
+      this.puzzle.board = []
     },
     onImageChange(image) {
       this.image = image
     },
-    refreshBoard() {
-      this.board = [...this.puzzle.board]
-    },
     onTileClick(index) {
       this.gameState = 'isStarted'
       this.puzzle.clickTo(index)
-      this.refreshBoard()
     },
     onKeyUp(direction) {
       this.gameState = 'isStarted'
       this.puzzle.move(direction)
-      this.refreshBoard()
     },
     onShuffle() {
       this.gameState = 'isShuffling'
       this.puzzle.shuffle()
-      this.refreshBoard()
     },
     moveToWithTimeout(dir) {
       return new Promise((resolve) => {
         setTimeout(() => {
           this.puzzle.moveEmpty(dir)
-          this.refreshBoard()
           resolve()
         }, 50)
       })
@@ -150,11 +131,11 @@ export default {
 .main {
   min-height: 100%;
   min-width: 100%;
-  perspective: 800px;
+  perspective: 1000px;
 }
 
 .board.rotated  {
-  transform: rotateX(45deg) translateY(-40px);
+  transform: rotateX(30deg) translateY(-40px);
   transform-style: preserve-3d;
 }
 
@@ -163,13 +144,15 @@ export default {
   transition: transform 300ms ease-out;
   --my-background-color: var(--lm-base-body-bg-color);
   --my-circle-color: white;
-  --my-circle-bg-color: rgba(0, 0, 0, .3);
+  --my-circle-bg-color: rgba(0, 0, 0, .2);
+  --my-circle-bg-color-hover: rgba(0, 0, 0, .4);
 }
 
 .dark-mode .board {
   --my-background-color: var(--dm-base-body-bg-color);
   --my-circle-color: black;
-  --my-circle-bg-color: rgba(255, 255, 255, .3);
+  --my-circle-bg-color: rgba(255, 255, 255, .2);
+  --my-circle-bg-color-hover: rgba(255, 255, 255, .4);
 }
 
 .form {
