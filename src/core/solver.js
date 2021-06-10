@@ -4,97 +4,63 @@ import Heap from 'qheap'
 import Puzzle from './puzzle.js'
 
 export default class Solver {
+// module.exports = class Solver {
 
   constructor (puzzle, shortest = false) {
     this.puzzle = puzzle
-    this.size = puzzle.size
-//     this.visitedNr = 0
 
-    //     this.visited = []
-//     this.visited = {}
     this.visited = new Set();
+
+//     this.queue = new FastPriorityQueue(shortest ? this.compareFunctionShortest : this.compareFunction)
     this.queue = new Heap({
-      comparBefore: (a, b) => shortest ? this.compareManhattanShortest(a,b) : this.compareManhattan(a,b)
-    });
-
-//     this.queue = new FastPriorityQueue((a, b) =>
-//       this.compareManhattan(a,b)
-//    this.compareManhattanShortest(a,b)
-//    this.compareManhattanAndHamming(a,b)
-//     )
+      comparBefore: (a, b) => shortest ? this.compareFunctionShortest(a, b) : this.compareFunction(a, b)
+    })
 
   }
 
-  rowDistance = (board, i) => Math.abs(i % this.size - (board[i] - 1) % this.size)
-  colDistance = (board, i) => Math.abs(Math.floor(i / this.size) - Math.floor((board[i] - 1) / this.size))
-
-  manhattan(board) {
-    let distance = 0
-    for (let i = 0; i < board.length; i++) {
-      if (i == board.indexOf(0)) {
-        continue
-      }
-      distance += this.rowDistance(board, i) + this.colDistance(board, i)
-    }
-    return distance
-  }
-
-  hamming(board) {
-    let nrOutOfPlace = 0
-    for (let i = 0; i < board.length; i++) {
-      if (i == board.indexOf(0)) {
-        continue
-      }
-      if (board[i] !== i + 1) {
-        nrOutOfPlace++
-      }
-    }
-    return nrOutOfPlace
-  }
-
-  // from princeton course
-  compareManhattanAndHamming(a, b) {
-    const manhattan1 = this.manhattan(a.board)
-    const manhattan2 = this.manhattan(b.board)
-
-    if (manhattan1 == manhattan2) {
-      return this.hamming(a.board) < this.hamming(b.board)
-    }
-    return manhattan1 < manhattan2
-  }
-
-  compareManhattan(a, b) {
-    const manhattan1 = this.manhattan(a.board)
-    const manhattan2 = this.manhattan(b.board)
-
-    if (manhattan1 == manhattan2) {
+  compareFunction(a, b) {
+    if (a.manhattan == b.manhattan) {
       return a.level < b.level
     }
-    return manhattan1 < manhattan2
+
+    return a.manhattan < b.manhattan
   }
 
-  compareManhattanShortest(a, b) {
-    return this.manhattan(a.board) + a.level < this.manhattan(b.board) + b.level
+  compareFunctionShortest(a, b) {
+    return a.manhattan + a.level < b.manhattan + b.level
   }
 
-  solve () {
+  getPath() {
+    let node = this.solve()
+    console.time('reverse')
+//     return node.path
+    const reverse = []
+    while (node.prevNode !== null) {
+      reverse.push(node.dir)
+      node = node.prevNode
+    }
+    reverse.reverse()
+    console.timeEnd('reverse')
+    return reverse
+  }
+
+  solve() {
     const initialNode = {
-      board: this.puzzle.board,
+      board: [...this.puzzle.board],
 //       path: [],
       prevNode: null,
       dir: '',
-      level: 0
+      level: 0,
+      manhattan: this.puzzle.manhattanSum(),
     }
 
     const solvedString = this.puzzle.getSolvedBoard().join('.')
 
 //     this.queue.add(initialNode)
     this.queue.insert(initialNode)
-//     this.visited.push(initialNode.board.toString())
     this.visited.add(initialNode.board.join('.'))
 
     let steps = 0
-//     const t0 = performance.now()
 
 //     while (!this.queue.isEmpty()) {
     while (this.queue.length > 0) {
@@ -103,34 +69,15 @@ export default class Solver {
       const current = this.queue.remove()
 
       if (steps % 10000 == 0) {
-        console.timeEnd('iteration')
-        console.log('iterations:' + steps, 'levels:' + current.level, current.board)
-        console.time('iteration')
-//         console.time('trim')
-//         this.queue.trim()
-//         console.timeEnd('trim')
+        console.timeEnd('time')
+        console.log('steps:', steps)
+        console.log('visited boards:', this.visited.size)
+        console.log('current:', current.board)
+        console.time('time')
       }
 
-//       if (max < current.level) {
-//         max = current.level
-//         const t1 = performance.now()
-//         console.log('visits', this.visitedNr)
-//         console.log(max + " Took " + (t1 - t0) + " milliseconds.")
-//       }
-
       if (current.board.join('.') == solvedString) {
-
-//         return current
-
-        const reverse = []
-
-        let node = current
-        while (node.prevNode !== null) {
-          reverse.push(node.dir)
-          node = node.prevNode
-        }
-
-        return reverse.reverse()
+        return current
       }
 
       this.expandNode(current)
@@ -141,11 +88,12 @@ export default class Solver {
   expandNode (node) {
     const directions = ['U', 'D', 'L', 'R']
 
-    directions.forEach(direction => {
+    for (let direction of directions) {
 
       const puzzle = new Puzzle(this.puzzle.size, [...node.board])
 
-      if (puzzle.moveEmpty(direction)) {
+      const manhattanDifference = puzzle.moveEmpty(direction)
+      if ( manhattanDifference !== 0) {
 
         const newNode = {
           board: puzzle.board,
@@ -153,22 +101,27 @@ export default class Solver {
           prevNode: node,
           dir: direction,
           level: node.level + 1,
+          manhattan: node.manhattan + manhattanDifference,
+//           manhattan: puzzle.manhattanSum(),
         }
 
-        if (!this.visited.has(puzzle.board.join('.'))) {
-          this.visited.add(puzzle.board.join('.'))
+        const boardString = puzzle.board.join('.')
+//         if (!this.visited.contains(boardString)) {
+
+        if (!this.visited.has(boardString)) {
+          this.visited.add(boardString)
 //           this.queue.add(newNode)
           this.queue.insert(newNode)
-//           this.visitedNr += 1
+          this.visitedNr += 1
         }
-
-//         if (!this.visited.includes(puzzle.board.toString())) {
-//           this.visitedNr += 1
-//           this.visited.push(puzzle.board.toString())
-//           this.queue.add(newNode)
-//         }
-
       }
-    })
+
+//       delete puzzle.board
+//       delete puzzle.size
+//       delete puzzle.indexOfEmpty
+//       delete puzzle.range
+
+    }
   }
 }
+

@@ -10,6 +10,30 @@ const sum = (array) => {
   return array.reduce((sum, item) => sum + item)
 }
 
+describe('Manhattan distance', () => {
+
+  test('manhattan difference changes after moves', () => {
+
+    const puzzle = new Puzzle(3)
+    expect(puzzle.manhattanSum()).toEqual(0)
+
+    expect(puzzle.moveEmpty('U')).toEqual(1)
+    expect(puzzle.manhattanSum()).toEqual(1)
+
+    expect(puzzle.moveEmpty('U')).toEqual(1)
+    expect(puzzle.manhattanSum()).toEqual(2)
+
+    expect(puzzle.moveEmpty('U')).toEqual(0)
+    expect(puzzle.manhattanSum()).toEqual(2)
+
+    expect(puzzle.moveEmpty('D')).toEqual(-1)
+    expect(puzzle.manhattanSum()).toEqual(1)
+
+    expect(puzzle.moveEmpty('L')).toEqual(1)
+    expect(puzzle.manhattanSum()).toEqual(2)
+  })
+})
+
 describe('Board creation and shuffle', () => {
 
   for (let size = 3; size <= 10; size++) {

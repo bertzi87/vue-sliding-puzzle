@@ -6,16 +6,15 @@ describe('A* Solver', () => {
   it('should solve 3x3 in 1 step', () => {
     const puzzle = new Puzzle(3, [1, 2, 3, 4, 5, 0, 7, 8, 6])
     const solver = new Solver(puzzle)
-    const path = solver.solve()
+    const path = solver.getPath()
     expect(path.toString()).toMatch('D')
   })
 
-  it('should solve 3x3 in 31 step', () => {
+  it('should solve 3x3 in 31 step (shortes)', () => {
     const puzzle = new Puzzle(3, [6, 4, 7, 8, 5, 0, 3, 2, 1])
 
-    // shortest
     const solver = new Solver(puzzle, true)
-    const path = solver.solve()
+    const path = solver.getPath()
 
     expect(path.length).toEqual(31)
 
@@ -33,12 +32,27 @@ describe('A* Solver', () => {
       15, 14, 0, 4,
       6, 9, 13, 12])
     const solver = new Solver(puzzle)
-    solver.solve().forEach((direction) => {
+    solver.getPath().forEach((direction) => {
       puzzle.moveEmpty(direction)
     })
 
     expect(puzzle.board).toEqual(puzzle.getSolvedBoard())
   })
+
+//   it('should solve 6x6', () => {
+//     const puzzle = new Puzzle(6, [
+//       8,  1, 14, 18, 25, 32, 26, 31, 24,
+//       11, 35, 20,  4, 27,  0, 12, 30, 15,
+//       23, 28,  2,  5, 22, 34, 21, 29, 10,
+//       7,  6,  9,  3, 16, 17, 33, 19, 13
+//     ])
+//     const solver = new Solver(puzzle)
+//     solver.getPath().forEach((direction) => {
+//       puzzle.moveEmpty(direction)
+//     })
+//
+//     expect(puzzle.board).toEqual(puzzle.getSolvedBoard())
+//   })
 
 //   it('should solve 5x5 in ? step', () => {
 //     const puzzle = new Puzzle(5, [
@@ -49,7 +63,7 @@ describe('A* Solver', () => {
 //       21, 24, 9, 3, 5
 //     ])
 //     const solver = new Solver(puzzle)
-//     const node = solver.solve()
+//     const node = solver.getPath()
 //
 //     node.path.forEach((direction) => {
 //       puzzle.moveEmpty(direction)

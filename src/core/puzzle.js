@@ -1,5 +1,5 @@
-// export default class Puzzle {
-module.exports = class Puzzle {
+export default class Puzzle {
+// module.exports = class Puzzle {
 
   constructor(size, board = false) {
 
@@ -39,40 +39,41 @@ module.exports = class Puzzle {
   }
 
   swapWithEmpty(index) {
+    const nr = this.board[index]
+    const oldManhattanDistance = this.manhattanDistance(nr, index)
+
     this.swap(index, this.indexOfEmpty)
     this.indexOfEmpty = index
+
+    return this.manhattanDistance(nr) - oldManhattanDistance
   }
 
   moveEmptyLeft() {
     if (this.colOfEmpty() > 0) {
-      this.swapWithEmpty(this.indexOfEmpty - 1)
-      return true
+      return this.swapWithEmpty(this.indexOfEmpty - 1)
     }
-    return false;
+    return 0
   }
 
   moveEmptyRight() {
     if (this.colOfEmpty() < this.size - 1) {
-      this.swapWithEmpty(this.indexOfEmpty + 1)
-      return true
+      return this.swapWithEmpty(this.indexOfEmpty + 1)
     }
-    return false;
+    return 0
   }
 
   moveEmptyUp() {
     if (this.rowOfEmpty() > 0) {
-      this.swapWithEmpty(this.indexOfEmpty - this.size)
-      return true
+      return this.swapWithEmpty(this.indexOfEmpty - this.size)
     }
-    return false;
+    return 0
   }
 
   moveEmptyDown() {
     if (this.rowOfEmpty() < this.size - 1) {
-      this.swapWithEmpty(this.indexOfEmpty + this.size)
-      return true
+      return this.swapWithEmpty(this.indexOfEmpty + this.size)
     }
-    return false;
+    return 0
   }
 
   moveEmpty(direction, reverse = false) {
@@ -153,50 +154,16 @@ module.exports = class Puzzle {
 //     return result
 //   }
 
-  rowDistance = (i) => Math.abs(this.rowDiff(i, this.board[i] - 1))
-  colDistance = (i) => Math.abs(this.colDiff(i, this.board[i] - 1))
-
-  manhattan () {
-    let distance = 0
-    for (let i = 0; i < this.range; i++) {
-      if (i == this.indexOfEmpty) {
-        continue
-      }
-      distance += this.rowDistance(i) + this.colDistance(i)
+  manhattanDistance = (nr, currentIndex = false) => {
+    if (nr == 0) {
+      return 0
     }
-    return distance
+    if (currentIndex === false) {
+      currentIndex = this.board.indexOf(nr)
+    }
+    const solvedIndex = nr - 1
+    return Math.abs(this.colDiff(solvedIndex, currentIndex)) + Math.abs(this.rowDiff(solvedIndex, currentIndex))
   }
 
-  hamming () {
-    let nrOutOfPlace = 0
-    for (let i = 0; i < this.range; i++) {
-      if (i == this.indexOfEmpty) {
-        continue
-      }
-      if (this.board[i] !== i + 1) {
-        nrOutOfPlace++
-      }
-    }
-    return nrOutOfPlace
-  }
-
-  distances () {
-    let manhattan = 0
-    let hamming = 0
-
-    for (let i = 0; i < this.range; i++) {
-      if (i == this.indexOfEmpty) {
-        continue
-      }
-      if (this.board[i] !== i + 1) {
-        hamming++
-      }
-      manhattan += this.rowDistance(i) + this.colDistance(i)
-    }
-
-    return {
-      manhattan,
-      hamming
-    }
-  }
+  manhattanSum = () => this.board.reduce((sum, nr, index) => sum + this.manhattanDistance(nr, index), 0)
 }
