@@ -101,8 +101,8 @@ export default {
 <style>
 
 .puzzle-list-move {
-/*   transition: all 200ms ease-out; */
-  transition: all v-bind(transitionGroupSpeed) ease-out;
+  transition: all 200ms ease-out;
+/*   transition: all v-bind(transitionGroupSpeed) ease-out; */
 }
 
 ul {
