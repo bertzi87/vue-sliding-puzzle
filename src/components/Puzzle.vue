@@ -34,8 +34,7 @@
 </template>
 
 <script>
-import Puzzle from "../core/puzzle.js"
-import Solver from '../core/solver.js'
+import { Puzzle, Solver } from "node-sliding-puzzle-solver"
 import Board from "./Board.vue"
 import ImageChooser from "./form/ImageChooser.vue"
 import ImageSearch from "./form/ImageSearch.vue"
@@ -105,14 +104,6 @@ export default {
       this.gameState = 'isShuffling'
       this.puzzle.shuffle()
     },
-    moveToWithTimeout(dir) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          this.puzzle.moveEmpty(dir)
-          resolve()
-        }, 50)
-      })
-    },
     async onSolve() {
       this.gameState = 'isSolving'
       const solver = new Solver(this.puzzle)
@@ -125,7 +116,8 @@ export default {
 
       for (const dir of path) {
         if (this.gameState == 'isSolving') {
-          await this.moveToWithTimeout(dir)
+          await new Promise(resolve => setTimeout(resolve, 100)); // sleep(100)
+          this.puzzle.moveEmpty(dir)
         }
       }
     },

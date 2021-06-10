@@ -65,9 +65,9 @@ li span {
   border-radius: 50%;
   width: 1.62em;
   height: 1.62em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/*   display: flex; */
+/*   align-items: center; */
+/*   justify-content: center; */
   background-color: var(--my-circle-bg-color);
   opacity: .9;
 }

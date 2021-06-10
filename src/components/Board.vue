@@ -32,7 +32,7 @@
 <script>
 import gsap from 'gsap'
 import Tile from './Tile.vue'
-import { getGSAPVars } from '../core/animations'
+import { getGSAPVars } from '../animations.js'
 
 function getOffsetPosition() {
   return {

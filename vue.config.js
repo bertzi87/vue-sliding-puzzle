@@ -1,7 +1,8 @@
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 //     .BundleAnalyzerPlugin;
-// module.exports = {
+module.exports = {
 //     configureWebpack: {
 //         plugins: [new BundleAnalyzerPlugin()]
 //     }
-// };
+  productionSourceMap: false
+};
