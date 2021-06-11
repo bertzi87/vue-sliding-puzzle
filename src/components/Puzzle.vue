@@ -78,12 +78,6 @@ export default {
     initPuzzle() {
       this.gameState = 'isStarted'
       this.puzzle = new Puzzle(this.size)
-//       this.puzzle = new Puzzle(6, [
-//         8,  1, 14, 18, 25, 32, 26, 31, 24,
-//         11, 35, 20,  4, 27,  0, 12, 30, 15,
-//         23, 28,  2,  5, 22, 34, 21, 29, 10,
-//         7,  6,  9,  3, 16, 17, 33, 19, 13
-//       ])
     },
     onBeforeImageChange() {
       this.gameState = 'isLoading'
@@ -116,7 +110,7 @@ export default {
 
       for (const dir of path) {
         if (this.gameState == 'isSolving') {
-          await new Promise(resolve => setTimeout(resolve, 100)); // sleep(100)
+          await new Promise(resolve => setTimeout(resolve, 100)); // sleep(100ms)
           this.puzzle.moveEmpty(dir)
         }
       }

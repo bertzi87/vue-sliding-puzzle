@@ -14,6 +14,7 @@
     >
       <Tile
         class="puzzle-list-item"
+        :class="class"
         v-for="(nr, index) in puzzle.board"
         :puzzle="puzzle"
         :key="nr"
@@ -33,13 +34,6 @@
 import gsap from 'gsap'
 import Tile from './Tile.vue'
 import { getGSAPVars } from '../animations.js'
-
-function getOffsetPosition() {
-  return {
-    left: this.offsetLeft,
-    top: this.offsetTop
-  };
-}
 
 export default {
   name: 'Board',
@@ -67,11 +61,11 @@ export default {
     }
   },
   computed: {
-    transitionGroupSpeed() {
+    class() {
       if (this.gameState == 'isShuffling') {
-        return (200 + this.puzzle.size * 25) + 'ms'
+        return ["puzzle-list-item-shuffle-" + this.puzzle.size]
       }
-      return this.gameState == 'isSolving' ? '100ms' : '200ms'
+      return this.gameState == 'isSolving' ? ["puzzle-list-item-solve"] : []
     }
   },
   watch: {
@@ -86,9 +80,15 @@ export default {
     },
     'puzzle.board': {
       handler() {
+        // vuejs issue: https://github.com/vuejs/vue/issues/11376
         document.getElementsByClassName("puzzle-list-item").forEach(
           el => {
-            el.getBoundingClientRect = getOffsetPosition
+            el.getBoundingClientRect = function() {
+              return {
+                left: this.offsetLeft,
+                top: this.offsetTop
+              }
+            }
           }
         );
       },
@@ -98,11 +98,20 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 
 .puzzle-list-move {
   transition: all 200ms ease-out;
-/*   transition: all v-bind(transitionGroupSpeed) ease-out; */
+}
+
+.puzzle-list-item-solve {
+  transition: all 100ms ease-out;
+}
+
+@for $i from 3 through 8 {
+  .puzzle-list-item-shuffle-#{$i} {
+    transition: all $i * 25ms + 900ms ease-out;
+  }
 }
 
 ul {
