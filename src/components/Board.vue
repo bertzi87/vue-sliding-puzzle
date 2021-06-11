@@ -81,16 +81,14 @@ export default {
     'puzzle.board': {
       handler() {
         // vuejs issue: https://github.com/vuejs/vue/issues/11376
-        document.getElementsByClassName("puzzle-list-item").forEach(
-          el => {
-            el.getBoundingClientRect = function() {
-              return {
-                left: this.offsetLeft,
-                top: this.offsetTop
-              }
+        for (let el of document.getElementsByClassName("puzzle-list-item")) {
+          el.getBoundingClientRect = function() {
+            return {
+              left: this.offsetLeft,
+              top: this.offsetTop
             }
           }
-        );
+        }
       },
       deep: true
     },

@@ -134,14 +134,14 @@ export default {
 .board {
   margin-top: 10px;
   transition: transform 300ms ease-out;
-  --my-background-color: var(--lm-base-body-bg-color);
+  --my-background-color: white;
   --my-circle-color: white;
   --my-circle-bg-color: rgba(0, 0, 0, .2);
   --my-circle-bg-color-hover: rgba(0, 0, 0, .4);
 }
 
 .dark-mode .board {
-  --my-background-color: var(--dm-base-body-bg-color);
+  --my-background-color: #25282c;
   --my-circle-color: black;
   --my-circle-bg-color: rgba(255, 255, 255, .2);
   --my-circle-bg-color-hover: rgba(255, 255, 255, .4);

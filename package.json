@@ -1,63 +1,22 @@
 {
   "name": "vue-puzzle",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
-    "core-js": "^3.6.5",
     "gsap": "^3.6.1",
     "halfmoon": "^1.1.1",
-    "node-sliding-puzzle-solver": "^1.0.0",
-    "vue": "^3.0.0"
+    "node-sliding-puzzle-solver": "^1.0.2",
+    "vue": "^3.0.5"
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^3.0.0",
-    "@fullhuman/vue-cli-plugin-purgecss": "~4.0.3",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0",
-    "postcss": "^7.0.35",
+    "@vitejs/plugin-vue": "^1.2.3",
+    "@vue/compiler-sfc": "^3.0.5",
     "sass": "^1.34.1",
-    "sass-loader": "^10.2.0",
-    "webpack-bundle-analyzer": "^3.9.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {},
-    "overrides": [
-      {
-        "files": [
-          "**/__tests__/*.{j,t}s?(x)",
-          "**/tests/unit/**/*.spec.{j,t}s?(x)"
-        ],
-        "env": {
-          "jest": true
-        }
-      }
-    ]
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "vite": "^2.3.7"
+  }
 }
