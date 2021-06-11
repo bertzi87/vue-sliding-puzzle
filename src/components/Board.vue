@@ -110,7 +110,7 @@ export default {
 
 @for $i from 3 through 8 {
   .puzzle-list-item-shuffle-#{$i} {
-    transition: all $i * 25ms + 900ms ease-out;
+    transition: all $i * 25ms + 200ms ease-out;
   }
 }
 
